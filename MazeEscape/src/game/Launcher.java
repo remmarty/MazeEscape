@@ -5,6 +5,7 @@ public class Launcher {
 
     public static void main(String[] args) {
 
-        new Window(1024, 768, "MazeEscape"); // create window
+        MazeEscape mazeEscape = new MazeEscape(800, 800, "MazeEscape"); // create window
+        mazeEscape.start();
     }
 }

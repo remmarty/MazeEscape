@@ -34,6 +34,9 @@ import java.awt.*;
             canvas.setFocusable(false);
             frame.add(canvas);
             frame.pack();
+        }
 
+        public Canvas getCanvas(){
+            return canvas;
         }
 }
