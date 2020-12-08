@@ -1,5 +1,6 @@
 package units;
 
+import block.Block;
 import status.GameState;
 import tools.TextureLoader;
 
@@ -18,11 +19,13 @@ public class Player {
         position = spawnPoint;
     }
 
-    public void update() {
+    public void move(Point offset) {
+        position.translate(offset.x, offset.y);
+        System.out.println(position);
     }
 
     public void render(Graphics graphics) {
-       graphics.drawImage(TextureLoader.player, position.x, position.y, null);
+       graphics.drawImage(TextureLoader.player, position.x * Block.WIDTH, position.y * Block.HEIGHT, null);
     }
 
     public int getHealth() {

@@ -1,6 +1,6 @@
 package status;
 
-import game.MazeEscape;
+import game.KeyboardInputListener;
 import units.Player;
 
 import java.awt.*;
@@ -9,6 +9,7 @@ import java.time.LocalTime;
 public class GameState {
 
     public static final int MAX_HEALTH_VALUE = 100;
+    private final KeyboardInputListener keyboard;
     Player player;
     LocalTime timeElapsed;
     private int playerHealth;
@@ -19,8 +20,9 @@ public class GameState {
 
     int collectedKeys = 0;
 
-    public GameState(Point spawnPoint) {
+    public GameState(Point spawnPoint, KeyboardInputListener keyboardListener) {
         player = new Player(spawnPoint);
+        keyboard = keyboardListener;
         collectedKeys = 0;
         timeElapsed = LocalTime.of(0, 0, 0);
         playerHealth = MAX_HEALTH_VALUE;
@@ -28,8 +30,15 @@ public class GameState {
 
     public void update() {
 //        player.update();
-
-
+        if (keyboard.goDown) {
+            player.move(new Point(0, 1));
+        } else if (keyboard.goUp) {
+            player.move(new Point(0, -1));
+        } else if (keyboard.goLeft) {
+            player.move(new Point(-1, 0));
+        } else if (keyboard.goRight) {
+            player.move(new Point(1, 0));
+        }
         timeElapsed = timeElapsed.plusSeconds(1);
 
         if (player.getHealth() > 0) {

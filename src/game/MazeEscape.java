@@ -25,8 +25,8 @@ public class MazeEscape implements Runnable {
     private Window window;
     private Thread gameThread;
     private Map map;
-    private Player player;
     private GameState gameState = null;
+    private KeyboardInputListener keyboardListener;
 
     public MazeEscape(int width, int height, String title) {  // game constructor
         this.width = width;
@@ -50,7 +50,7 @@ public class MazeEscape implements Runnable {
         }
         graphics = bufferStrategy.getDrawGraphics();
         graphics.clearRect(0, 0, width, height);
-        Block.blocks[0].render(graphics, 0,0);
+//        Block.blocks[0].render(graphics, 0,0);
         map.mapRender(graphics);
 
 
@@ -95,20 +95,21 @@ public class MazeEscape implements Runnable {
         graphics.drawImage(keyImage, 710, 65, 40, 40, null);
 //        graphics2D.dispose();
 
+//        if(gameState != null){
+        gameState.render(graphics);
+//        }
         bufferStrategy.show();
         graphics.dispose();
-        if(gameState != null){
-            gameState.render(graphics);
-        }
 
     }
 
     public void boot() {
 
         //player = new Player(100,100);
-        window = new Window(width, height, title);
         map = new Map("/map/Map_3.txt");
-        gameState = new GameState(map.getSpawnPoint());
+        keyboardListener = new KeyboardInputListener();
+        gameState = new GameState(map.getSpawnPoint(), keyboardListener);
+        window = new Window(width, height, title, keyboardListener);
         TextureLoader.loadBlocks();
       //  player.render(graphics);
 
