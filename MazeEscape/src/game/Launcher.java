@@ -7,5 +7,6 @@ public class Launcher {
 
         MazeEscape mazeEscape = new MazeEscape(800, 800, "MazeEscape"); // create window
         mazeEscape.start();
+        mazeEscape.run();
     }
 }
