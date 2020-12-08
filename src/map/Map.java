@@ -14,13 +14,13 @@ public class Map {
     private int mapHeight;
     Point playerSpawnPoint;
     BlockType[][] blocks;
+    int numOfKeys = 0;
 
 
     public int getNumOfKeys() {
         return numOfKeys;
     }
 
-    int numOfKeys = 0;
 
     public Map(String path) {   // constructor that loads the map
         loadMap(path);
@@ -54,7 +54,7 @@ public class Map {
         mapWidth = MapLoader.parseInt(data[0]);
         mapHeight = MapLoader.parseInt(data[1]);
 
-        blocks = new BlockType[mapWidth][mapHeight];
+        blocks = new BlockType[mapHeight][mapWidth];
 
         for (int y = 0; y < mapHeight; y++)
             for(int x = 0; x < mapWidth; x++){
@@ -65,11 +65,19 @@ public class Map {
                 } else if (blockType == BlockType.PLAYER) {
                     playerSpawnPoint = new Point(x, y);
                 }
-                blocks[x][y] = blockType;
+                blocks[y][x] = blockType;
             }
     }
 
     public Point getSpawnPoint() {
         return playerSpawnPoint;
+    }
+
+    public BlockType getBlock(Point coord) {
+        return blocks[coord.y][coord.x];
+    }
+
+    public void put(Point coord, BlockType blockType) {
+        blocks[coord.y][coord.x] = blockType;
     }
 }

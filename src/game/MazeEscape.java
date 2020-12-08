@@ -108,7 +108,7 @@ public class MazeEscape implements Runnable {
         //player = new Player(100,100);
         map = new Map("/map/Map_3.txt");
         keyboardListener = new KeyboardInputListener();
-        gameState = new GameState(map.getSpawnPoint(), keyboardListener);
+        gameState = new GameState(map, keyboardListener);
         window = new Window(width, height, title, keyboardListener);
         TextureLoader.loadBlocks();
       //  player.render(graphics);

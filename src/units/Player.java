@@ -35,4 +35,8 @@ public class Player {
     public void addHealth(int healthPoints) {
         health += healthPoints;
     }
+
+    public Point getPosition() {
+        return position;
+    }
 }
