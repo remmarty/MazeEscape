@@ -3,13 +3,13 @@ package game;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class KeyboardInput implements KeyListener {
+public class KeyboardInputListener implements KeyListener {
 
     private static final int KEYS = 256;
     private final boolean[] key;
     public boolean goRight, goLeft, goUP, goDown;
 
-    public KeyboardInput() {
+    public KeyboardInputListener() {
         key = new boolean[KEYS];
     }
 
@@ -25,7 +25,8 @@ public class KeyboardInput implements KeyListener {
 
     public void keyPressed(KeyEvent e) {
         key[e.getKeyCode()] = true;
-        System.out.println("Pressed");
+//        System.out.println("Pressed");
+        System.out.println("keyPressed="+KeyEvent.getKeyText(e.getKeyCode()));
         //key[e.getKeyCode()] = true;
 //        int key = e.getKeyCode();
 //

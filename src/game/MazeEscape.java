@@ -19,7 +19,6 @@ public class MazeEscape implements Runnable {
     public int width, height;
     public String title;
     private boolean running = false;
-    private KeyboardInput keyboardInput;
     private BufferStrategy bufferStrategy;
     private Graphics graphics;
     private BufferedImage textures;
@@ -108,7 +107,6 @@ public class MazeEscape implements Runnable {
 
         //player = new Player(100,100);
         window = new Window(width, height, title);
-        window.getFrame().addKeyListener(keyboardInput);
         map = new Map("/map/Map_3.txt");
         gameState = new GameState(map.getSpawnPoint());
         TextureLoader.loadBlocks();

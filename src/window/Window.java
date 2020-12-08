@@ -1,5 +1,6 @@
 package window;
 
+import game.KeyboardInputListener;
 import game.MazeEscape;
 
 import javax.swing.*;
@@ -19,10 +20,10 @@ public class Window {
             this.width = width;
             this.height = height;
             this.title = title;
-            Display();
+            frame = initFrame();
         }
 
-        private void Display() {       // method that manages our window and canvas
+        private JFrame initFrame() {       // method that manages our window and canvas
 
             frame = new JFrame(title);          // setting the frame
             frame.setLocationRelativeTo(null);
@@ -44,11 +45,11 @@ public class Window {
             canvas.setPreferredSize(new Dimension(width, height));
             canvas.setMaximumSize(new Dimension(width, height));
             canvas.setMinimumSize(new Dimension(width, height));
-            canvas.setFocusable(false);
-
+            canvas.setFocusable(true);
+            canvas.addKeyListener(new KeyboardInputListener());
             frame.add(canvas);
-
             frame.pack();
+            return frame;
         }
 
         public JFrame getFrame() { return frame; }
