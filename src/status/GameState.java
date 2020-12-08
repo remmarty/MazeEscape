@@ -6,10 +6,10 @@ import units.Player;
 import java.awt.*;
 import java.time.LocalTime;
 
-public class GameState extends State {
+public class GameState {
 
     public static final int MAX_HEALTH_VALUE = 100;
-    private Player player;
+    Player player;
     LocalTime timeElapsed;
     private int playerHealth;
 
@@ -19,19 +19,21 @@ public class GameState extends State {
 
     int collectedKeys = 0;
 
-    public GameState(MazeEscape mazeEscape) {
-        super(mazeEscape);
-        player = new Player(100,100);
+    public GameState(Point spawnPoint) {
+        player = new Player(spawnPoint);
         collectedKeys = 0;
         timeElapsed = LocalTime.of(0, 0, 0);
         playerHealth = MAX_HEALTH_VALUE;
     }
 
     public void update() {
-        player.update();
+//        player.update();
+
+
         timeElapsed = timeElapsed.plusSeconds(1);
-        if (playerHealth > 0) {
-            playerHealth--;
+
+        if (player.getHealth() > 0) {
+            player.addHealth(-1);
         }
     }
 
@@ -46,4 +48,8 @@ public class GameState extends State {
     public int getPlayerHealth() {
         return playerHealth;
     }
+
+//    public Player spawnPlayer(Point spawnPoint) {
+//        player = ;
+//    }
 }

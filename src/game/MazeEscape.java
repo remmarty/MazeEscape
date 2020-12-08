@@ -3,7 +3,6 @@ package game;
 import block.Block;
 import map.Map;
 import status.GameState;
-import status.State;
 import tools.ImgLoader;
 import tools.TextureLoader;
 import units.Player;
@@ -28,7 +27,7 @@ public class MazeEscape implements Runnable {
     private Thread gameThread;
     private Map map;
     private Player player;
-    private GameState gameState;
+    private GameState gameState = null;
 
     public MazeEscape(int width, int height, String title) {  // game constructor
         this.width = width;
@@ -39,8 +38,8 @@ public class MazeEscape implements Runnable {
 
 
     public void update() {
-        if(State.getState() != null){
-            State.getState().update();
+        if(gameState != null){
+            gameState.update();
         }
     }
 
@@ -57,13 +56,8 @@ public class MazeEscape implements Runnable {
 
 
         /* Create an ARGB BufferedImage */
-        BufferedImage img = ImgLoader.loadImg("/textures/fog.png");
-//        int w = img.getWidth(null);
-//        int h = img.getHeight(null);
-//        BufferedImage bi = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-//        Graphics g = bi.getGraphics();
-//        graphics.drawImage(img, -500, -500, null);
-        graphics.drawImage(img, -824 + FPS, -664, 2500,2500, null);
+        BufferedImage fog = ImgLoader.loadImg("/textures/fog.png");
+//        graphics.drawImage(fog, -824 + FPS, -664, 2500,2500, null);
 //        FPS+=2;
 //        System.out.println(player.getX() + " " + player.getY());
 
@@ -104,8 +98,8 @@ public class MazeEscape implements Runnable {
 
         bufferStrategy.show();
         graphics.dispose();
-        if(State.getState() != null){
-            State.getState().render(graphics);
+        if(gameState != null){
+            gameState.render(graphics);
         }
 
     }
@@ -115,12 +109,10 @@ public class MazeEscape implements Runnable {
         //player = new Player(100,100);
         window = new Window(width, height, title);
         window.getFrame().addKeyListener(keyboardInput);
-        gameState = new GameState(this);
-        State.setState(gameState);
-        TextureLoader.loadBlocks();
         map = new Map("/map/Map_3.txt");
+        gameState = new GameState(map.getSpawnPoint());
+        TextureLoader.loadBlocks();
       //  player.render(graphics);
-
 
        textures = ImgLoader.loadImg("/textures/textures.png");
     }

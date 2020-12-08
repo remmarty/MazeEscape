@@ -2,18 +2,15 @@ package map;
 
 import block.Block;
 import block.BlockFixme;
-import block.KeyBlock;
 import tools.MapLoader;
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public class Map {
 
     private int mapWidth;
     private int mapHeight;
-    private int playerX;
-    private int playerY;
+    Point playerSpawnPoint;
     private int[][] blocks;
 
     public int getNumOfKeys() {
@@ -50,18 +47,22 @@ public class Map {
         String[] data = mapFile.split("\\s+");
         mapWidth = MapLoader.parseInt(data[0]);
         mapHeight = MapLoader.parseInt(data[1]);
-        playerX = MapLoader.parseInt(data[2]);
-        playerY = MapLoader.parseInt(data[3]);
 
         blocks = new int[mapWidth][mapHeight];
 
-        for (int j = 0; j < mapHeight; j++)
-            for(int i = 0; i < mapWidth; i++){
-                int cellValue = MapLoader.parseInt(data[i+j*mapWidth + 4]);
+        for (int y = 0; y < mapHeight; y++)
+            for(int x = 0; x < mapWidth; x++){
+                int cellValue = MapLoader.parseInt(data[x+y*mapWidth + 2]); // FIXME refactor
                 if (cellValue == BlockFixme.KEY.getValue()) {
                     numOfKeys++;
+                } else if (cellValue == BlockFixme.PLAYER.getValue()) {
+                    playerSpawnPoint = new Point(x, y);
                 }
-                blocks[i][j] = cellValue;
+                blocks[x][y] = cellValue;
             }
+    }
+
+    public Point getSpawnPoint() {
+        return playerSpawnPoint;
     }
 }
