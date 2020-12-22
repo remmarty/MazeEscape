@@ -18,7 +18,6 @@ public class GameState {
     private final Map map;
     Player player;
     LocalTime timeElapsed;
-    private int playerHealth;
 
     public int getCollectedKeys() {
         return collectedKeys;
@@ -32,7 +31,7 @@ public class GameState {
         keyboard = keyboardListener;
         collectedKeys = 0;
         timeElapsed = LocalTime.of(0, 0, 0);
-        playerHealth = MAX_HEALTH_VALUE;
+        player.setHealth(MAX_HEALTH_VALUE);
     }
 
     private boolean isAllowedMove(Point relative) {
@@ -43,7 +42,7 @@ public class GameState {
 
     public void update() {
 //        player.update();
-        System.out.println(player.getPosition());
+//        System.out.println(player.getPosition());
         if (keyboard.goDown && isAllowedMove(DOWN)){
             player.move(DOWN);
         } else if (keyboard.goUp && isAllowedMove(UP)) {
@@ -68,6 +67,7 @@ public class GameState {
 
         if (player.getHealth() > 0) {
             player.addHealth(-1);
+//            System.out.println(player.getHealth());
         }
     }
 
@@ -80,7 +80,11 @@ public class GameState {
     }
 
     public int getPlayerHealth() {
-        return playerHealth;
+        return player.getHealth();
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 
 //    public Player spawnPlayer(Point spawnPoint) {

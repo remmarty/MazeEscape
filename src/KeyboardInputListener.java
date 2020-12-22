@@ -22,7 +22,7 @@ public class KeyboardInputListener implements KeyListener {
     }
 
     public void keyPressed(KeyEvent e) {
-        System.out.println("keyPressed="+KeyEvent.getKeyText(e.getKeyCode()));
+//        System.out.println("keyPressed="+KeyEvent.getKeyText(e.getKeyCode()));
         key[e.getKeyCode()] = true;
         update(); // FIXME
     }

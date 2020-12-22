@@ -46,9 +46,13 @@ public class MazeEscape implements Runnable {
 
         /* Create an ARGB BufferedImage */
         BufferedImage fog = ImgLoader.loadImg("/textures/fog.png");
-//        graphics.drawImage(fog, -824 + FPS, -664, 2500,2500, null);
+        int width = fog.getWidth();
+        int height = fog.getHeight();
+
+//        gameState.getFogPosition
+        graphics.drawImage(fog, -width/2 + gameState.getPlayer().position.x * Block.WIDTH + Block.WIDTH / 2, -height/2 + gameState.getPlayer().position.y * Block.HEIGHT + Block.HEIGHT/2, width, height, null);
 //        FPS+=2;
-//        System.out.println(player.getX() + " " + player.getY());
+//        System.out.println(gameState.getPlayer().position.x + " " + gameState.getPlayer().position.y);
 
         /*
          * Create a rescale filter op that makes the image
@@ -114,11 +118,68 @@ public class MazeEscape implements Runnable {
         // TODO cap frame rate somehow
 //        System.currentTimeMillis() > lastTickTime
 //        double lastTickTime = System.currentTimeMillis();
-        while(running) {
-            update();
-            render();
-        }
+        final int FPS = 300;
 
+        final long NS_PER_UPDATE = (long)((1.0d/FPS) * 1000000000);
+
+//        long delta = System.nanoTime();;
+//        while(running) {
+//            if(delta >= NS_PER_UPDATE){
+//                long missedTime = delta - NS_PER_UPDATE;
+//                update();
+//                render();
+//            }
+//        }
+        long secondsPassed = 0;
+        long nextTick = System.nanoTime();
+        long nextSecond = nextTick;
+        long nextRender = nextTick;
+
+        while (running) {
+
+            final long now = System.nanoTime();
+
+            if (now - nextRender >= 0) {
+                // update the game
+                update();
+                render();
+
+                do {
+                    nextRender += NS_PER_UPDATE;
+                } while (now - nextRender >= 0);
+            }
+
+//            if (now - nextTick >= 0) {
+//                update();
+//                // catch up with as many ticks as needed (skip them if necessary).
+//                do {
+//                    nextTick += NS_PER_UPDATE;
+//                } while (now - nextTick >= 0);
+//            }
+
+            if (now - nextSecond >= 0) {
+                // catch up with as many ticks as needed (no skipping!).
+                nextSecond += NS_PER_UPDATE;
+                secondsPassed++;
+                System.out.println((float)(now - nextSecond) / 1000000000);
+            }
+
+            // calculate the delay to the next event.....
+            final long workTime = System.nanoTime();
+            final long minDelay = Math.min(nextSecond - workTime,
+                    Math.min(nextTick - workTime, nextRender - workTime));
+
+            if (minDelay > 0) {
+                //next event is no due yet. Yield the system....
+                // to some point after the next delay... (millisecond precision)
+                long milliDelay = (minDelay + 1_000_000) / 1_000_000L;
+                try {
+                    Thread.sleep(milliDelay);
+                } catch (InterruptedException ie) {
+                    // ignore.
+                }
+            }
+        }
     }
 
     public void start() {

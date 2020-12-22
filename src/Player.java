@@ -33,4 +33,8 @@ public class Player {
     public Point getPosition() {
         return position;
     }
+
+    public void setHealth(int value) {
+        health = value;
+    }
 }
