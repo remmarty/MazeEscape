@@ -15,7 +15,10 @@ public class Player {
 
     public void move(Point offset) {
         position.translate(offset.x, offset.y);
-        System.out.println(position);
+        if (health > 0) {
+            health -= 1;
+//            System.out.println(player.getHealth());
+        }
     }
 
     public void render(Graphics graphics) {
@@ -26,9 +29,9 @@ public class Player {
         return health;
     }
 
-    public void addHealth(int healthPoints) {
-        health += healthPoints;
-    }
+//    public void addHealth(int healthPoints) {
+//        health += healthPoints;
+//    }
 
     public Point getPosition() {
         return position;

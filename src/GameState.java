@@ -63,12 +63,7 @@ public class GameState {
             System.out.println("win"); // FIXME refactor, end state
         }
 
-        timeElapsed = timeElapsed.plusSeconds(1);
 
-        if (player.getHealth() > 0) {
-            player.addHealth(-1);
-//            System.out.println(player.getHealth());
-        }
     }
 
     public void render(Graphics graphics) {
