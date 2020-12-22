@@ -4,8 +4,10 @@ import java.awt.image.BufferedImage;
 import java.time.format.DateTimeFormatter;
 
 public class MazeEscape implements Runnable {
+    final int FPS = 15;
+    final long NS_PER_UPDATE = (long)((1.0d/FPS) * 1000000000);
+    final long NS_PER_SECOND = 1000000000;
 
-    public static int FPS = 30;
     public int width, height;
     public String title;
     private boolean running = false;
@@ -22,7 +24,6 @@ public class MazeEscape implements Runnable {
         this.width = width;
         this.height = height;
         this.title = title;
-
     }
 
 
@@ -48,23 +49,9 @@ public class MazeEscape implements Runnable {
         BufferedImage fog = ImgLoader.loadImg("/textures/fog.png");
         int width = fog.getWidth();
         int height = fog.getHeight();
-
-//        gameState.getFogPosition
+        // TODO refactor position to gamestate
         graphics.drawImage(fog, -width/2 + gameState.getPlayer().position.x * Block.WIDTH + Block.WIDTH / 2, -height/2 + gameState.getPlayer().position.y * Block.HEIGHT + Block.HEIGHT/2, width, height, null);
-//        FPS+=2;
-//        System.out.println(gameState.getPlayer().position.x + " " + gameState.getPlayer().position.y);
 
-        /*
-         * Create a rescale filter op that makes the image
-         * 50% opaque.
-         */
-//        float[] scales = { 1f, 1f, 1f, 0.5f };
-//        float[] offsets = new float[4];
-//        RescaleOp rop = new RescaleOp(scales, offsets, null);
-//
-//        /* Draw the image, applying the filter */
-//        g2d.drawImage(bi, rop, 0, 0);
-        // FIXME Declare once somewhere
         Font font = new Font("Impact", Font.PLAIN, 40);
         graphics.setFont(font);
 
@@ -109,27 +96,41 @@ public class MazeEscape implements Runnable {
 
        textures = ImgLoader.loadImg("/textures/textures.png");
     }
-
-    public void run() {
-        boot();
-        long timer = 0;
-        int ticks = 0;
-
-        // TODO cap frame rate somehow
-//        System.currentTimeMillis() > lastTickTime
-//        double lastTickTime = System.currentTimeMillis();
-        final int FPS = 300;
-
-        final long NS_PER_UPDATE = (long)((1.0d/FPS) * 1000000000);
-
-//        long delta = System.nanoTime();;
-//        while(running) {
-//            if(delta >= NS_PER_UPDATE){
-//                long missedTime = delta - NS_PER_UPDATE;
+//    public void run() {
+//        boot();
+//        long lastReset = System.nanoTime();
+//        long nextUpdate = lastReset + UPDATE_INTERVAL;
+//        long nextDraw = lastReset + DRAW_INTERVAL;
+//        long nextReset = lastReset + NANOSECONDS_PER_SECOND;
+//        while (running) {
+//            long now = System.nanoTime();
+//            while (now > nextUpdate) {
 //                update();
-//                render();
+//                nextUpdate += UPDATE_INTERVAL;
+//                updateCount++;
+//            }
+//
+//            while (now > nextDraw) {
+//                draw();
+//                nextDraw += DRAW_INTERVAL;
+//                frameCount++;
+//            }
+//
+//            if (now >= nextReset) {
+//                nextReset += NANOSECONDS_PER_SECOND;
+//                double interval = (double) (now - lastReset);
+//                double fps = frameCount / interval;
+//                double updatesPerSecond = updateCount / interval;
+//                System.out.println("Fps: " + fps + " | Updates: " + updatesPerSecond);
+//                frameCount = 0;
+//                updateCount = 0;
+//                lastReset = now;
 //            }
 //        }
+//    }
+    public void run() {
+        boot();
+
         long secondsPassed = 0;
         long nextTick = System.nanoTime();
         long nextSecond = nextTick;
@@ -137,31 +138,24 @@ public class MazeEscape implements Runnable {
 
         while (running) {
 
+
             final long now = System.nanoTime();
 
-            if (now - nextRender >= 0) {
-                // update the game
+            if (now - nextTick >= 0) {
                 update();
                 render();
-
+                // catch up with as many ticks as needed (skip them if necessary).
                 do {
-                    nextRender += NS_PER_UPDATE;
-                } while (now - nextRender >= 0);
+                    nextTick += NS_PER_UPDATE;
+                } while (now - nextTick >= 0);
             }
-
-//            if (now - nextTick >= 0) {
-//                update();
-//                // catch up with as many ticks as needed (skip them if necessary).
-//                do {
-//                    nextTick += NS_PER_UPDATE;
-//                } while (now - nextTick >= 0);
-//            }
 
             if (now - nextSecond >= 0) {
                 // catch up with as many ticks as needed (no skipping!).
-                nextSecond += NS_PER_UPDATE;
+                nextSecond += NS_PER_SECOND;
                 secondsPassed++;
                 System.out.println((float)(now - nextSecond) / 1000000000);
+                gameState.timeElapsed = gameState.timeElapsed.plusSeconds(1);
             }
 
             // calculate the delay to the next event.....
