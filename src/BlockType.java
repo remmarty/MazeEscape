@@ -1,5 +1,3 @@
-package block;
-
 public enum BlockType {
     PASSAGE(0),
     WALL(1),

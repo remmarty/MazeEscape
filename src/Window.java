@@ -1,7 +1,4 @@
-package window;
-
-import game.KeyboardInputListener;
-import game.MazeEscape;
+//import KeyboardInputListener;
 
 import javax.swing.*;
 import java.awt.*;

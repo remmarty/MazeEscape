@@ -1,10 +1,3 @@
-package map;
-
-import block.Block;
-import block.BlockType;
-import tools.MapLoader;
-import tools.TextureLoader;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 

@@ -1,13 +1,3 @@
-package game;
-
-import block.Block;
-import map.Map;
-import status.GameState;
-import tools.ImgLoader;
-import tools.TextureLoader;
-import units.Player;
-import window.Window;
-
 import java.awt.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;

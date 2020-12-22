@@ -1,5 +1,3 @@
-package tools;
-
 import java.awt.image.BufferedImage;
 
 public class TextureLoader {

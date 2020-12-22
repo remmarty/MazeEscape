@@ -1,9 +1,3 @@
-package units;
-
-import block.Block;
-import status.GameState;
-import tools.TextureLoader;
-
 import java.awt.*;
 
 public class Player {
