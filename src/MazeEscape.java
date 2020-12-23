@@ -15,10 +15,19 @@ public class MazeEscape implements Runnable {
     private Graphics graphics;
     private BufferedImage textures;
     private Window window;
-    private Thread gameThread;
     private Map map;
     private GameState gameState = null;
     private KeyboardInputListener keyboardListener;
+    Font font = new Font("Impact", Font.PLAIN, 40);
+
+    String[] mapPaths = {"/map/Map_3.txt", "/map/Map_4.txt", "/map/Map_3.txt"};
+    int currentMapIndex = 0;
+    enum FinalState {
+        IN_PROGRESS,
+        VICTORY,
+        DEFEAT
+    };
+    FinalState state = FinalState.IN_PROGRESS;
 
     public MazeEscape(int width, int height, String title) {  // game constructor
         this.width = width;
@@ -26,10 +35,22 @@ public class MazeEscape implements Runnable {
         this.title = title;
     }
 
-
     public void update() {
-        if(gameState != null){
+        if (gameState != null) {
             gameState.update();
+            switch (gameState.state) {
+                case WIN:
+                    currentMapIndex++;
+                    if (currentMapIndex < mapPaths.length) {
+                        reloadWithMap(mapPaths[currentMapIndex]);
+                        state = FinalState.IN_PROGRESS;
+                    } else {
+                        state = FinalState.VICTORY;
+                    }
+                    break;
+                case DEFEAT:
+                    state = FinalState.DEFEAT;
+            }
         }
     }
 
@@ -50,30 +71,48 @@ public class MazeEscape implements Runnable {
         int width = fog.getWidth();
         int height = fog.getHeight();
         // TODO refactor position to gamestate
-        graphics.drawImage(fog, -width/2 + gameState.getPlayer().position.x * Block.WIDTH + Block.WIDTH / 2, -height/2 + gameState.getPlayer().position.y * Block.HEIGHT + Block.HEIGHT/2, width, height, null);
+//        graphics.drawImage(fog, -width/2 + gameState.getPlayer().position.x * Block.WIDTH + Block.WIDTH / 2, -height/2 + gameState.getPlayer().position.y * Block.HEIGHT + Block.HEIGHT/2, width, height, null);
 
-        Font font = new Font("Impact", Font.PLAIN, 40);
         graphics.setFont(font);
 
-        if (gameState.getPlayerHealth() > 50) {
-            graphics.setColor(Color.GREEN);
-        } else {
-            graphics.setColor(Color.RED);
+        switch (state) {
+            case IN_PROGRESS:
+                if (gameState.getPlayerHealth() > 50) {
+                    graphics.setColor(Color.GREEN);
+                } else {
+                    graphics.setColor(Color.RED);
+                }
+                graphics.drawString(gameState.getPlayerHealth() + "/" + GameState.MAX_HEALTH_VALUE, 650, 50);
+
+                if (gameState.getCollectedKeys() < map.getNumOfKeys()) {
+                    graphics.setColor(Color.YELLOW);
+                } else {
+                    graphics.setColor(Color.GREEN);
+                }
+                graphics.drawString(gameState.getCollectedKeys() + "/" + map.getNumOfKeys(), 650, 100);
+
+                DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("mm:ss");
+                graphics.setColor(Color.WHITE);
+                graphics.drawString(gameState.getTimeElapsed().format(timeFormatter), 650, 150);
+
+                // FIXME Load once
+                BufferedImage keyImage = ImgLoader.loadImg("/textures/key.png");
+                graphics.drawImage(keyImage, 710, 65, 40, 40, null);
+                break;
+            case VICTORY:
+                graphics.setColor(Color.green);
+                graphics.drawString("VICTORY!", 300, 400);
+                running = false;
+                break;
+            case DEFEAT:
+                graphics.setColor(Color.red);
+                graphics.drawString("GAME OVER!", 300, 400);
+                running = false;
+                break;
         }
-        graphics.drawString(gameState.getPlayerHealth() + "/" + GameState.MAX_HEALTH_VALUE, 650, 50);
-
-        graphics.setColor(Color.YELLOW);
-        graphics.drawString(gameState.getCollectedKeys() + "/" + map.getNumOfKeys(), 650, 100);
-
-        DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("mm:ss");
-        graphics.setColor(Color.WHITE);
-        graphics.drawString(gameState.getTimeElapsed().format(timeFormatter), 650, 150);
-
-        BufferedImage keyImage = ImgLoader.loadImg("/textures/key.png");
 
 //        BufferedImage resizedImage = new BufferedImage(60, 60, BufferedImage.TYPE_INT_ARGB);
 //        Graphics2D graphics2D = resizedImage.createGraphics();
-        graphics.drawImage(keyImage, 710, 65, 40, 40, null);
 //        graphics2D.dispose();
 
 //        if(gameState != null){
@@ -85,49 +124,21 @@ public class MazeEscape implements Runnable {
     }
 
     public void boot() {
-
-        //player = new Player(100,100);
-        map = new Map("/map/Map_3.txt");
         keyboardListener = new KeyboardInputListener();
-        gameState = new GameState(map, keyboardListener);
         window = new Window(width, height, title, keyboardListener);
+        String initialMap = mapPaths[0];
+        reloadWithMap(initialMap);
         TextureLoader.loadBlocks();
-      //  player.render(graphics);
-
-       textures = ImgLoader.loadImg("/textures/textures.png");
+        textures = ImgLoader.loadImg("/textures/textures.png");
     }
-//    public void run() {
-//        boot();
-//        long lastReset = System.nanoTime();
-//        long nextUpdate = lastReset + UPDATE_INTERVAL;
-//        long nextDraw = lastReset + DRAW_INTERVAL;
-//        long nextReset = lastReset + NANOSECONDS_PER_SECOND;
-//        while (running) {
-//            long now = System.nanoTime();
-//            while (now > nextUpdate) {
-//                update();
-//                nextUpdate += UPDATE_INTERVAL;
-//                updateCount++;
-//            }
-//
-//            while (now > nextDraw) {
-//                draw();
-//                nextDraw += DRAW_INTERVAL;
-//                frameCount++;
-//            }
-//
-//            if (now >= nextReset) {
-//                nextReset += NANOSECONDS_PER_SECOND;
-//                double interval = (double) (now - lastReset);
-//                double fps = frameCount / interval;
-//                double updatesPerSecond = updateCount / interval;
-//                System.out.println("Fps: " + fps + " | Updates: " + updatesPerSecond);
-//                frameCount = 0;
-//                updateCount = 0;
-//                lastReset = now;
-//            }
-//        }
-//    }
+
+    private void reloadWithMap(String mapFilePath) {
+        map = new Map(mapFilePath);
+        gameState = new GameState(map, keyboardListener);
+        // FIXME
+//        window.resize(map.getMapWidth() * Block.WIDTH, map.getMapHeight() * Block.HEIGHT);
+    }
+
     public void run() {
         boot();
 

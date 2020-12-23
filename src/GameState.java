@@ -7,6 +7,12 @@ import java.awt.*;
 import java.time.LocalTime;
 
 public class GameState {
+    enum State {
+        IN_PROGRESS,
+        WIN,
+        DEFEAT,
+    }
+
     //  FIXME refactor to another class
     private final Point DOWN = new Point(0, 1);
     private final Point UP = new Point(0, -1);
@@ -18,6 +24,8 @@ public class GameState {
     private final Map map;
     Player player;
     LocalTime timeElapsed;
+//    private boolean isCompleted = false;
+    State state = State.IN_PROGRESS;
 
     public int getCollectedKeys() {
         return collectedKeys;
@@ -53,17 +61,22 @@ public class GameState {
             player.move(RIGHT);
         }
 
+        if (player.getHealth() <= 0) {
+            state = State.DEFEAT;
+        }
+//
         if (collectedKeys < map.getNumOfKeys()) {
             if (map.getBlock(player.getPosition()) == BlockType.KEY) {
                 collectedKeys++;
+                player.setHealth(MAX_HEALTH_VALUE);
                 System.out.println("key collected");
                 map.put(player.getPosition(), BlockType.PASSAGE);
             }
         } else {
-            System.out.println("win"); // FIXME refactor, end state
+            if (map.getBlock(player.getPosition()) == BlockType.EXIT) {
+                state = State.WIN;
+            }
         }
-
-
     }
 
     public void render(Graphics graphics) {
@@ -81,6 +94,7 @@ public class GameState {
     public Player getPlayer() {
         return player;
     }
+
 
 //    public Player spawnPlayer(Point spawnPoint) {
 //        player = ;

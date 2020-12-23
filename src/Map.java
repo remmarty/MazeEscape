@@ -4,6 +4,15 @@ import java.awt.image.BufferedImage;
 public class Map {
 
     private int mapWidth;
+
+    public int getMapWidth() {
+        return mapWidth;
+    }
+
+    public int getMapHeight() {
+        return mapHeight;
+    }
+
     private int mapHeight;
     Point playerSpawnPoint;
     BlockType[][] blocks;

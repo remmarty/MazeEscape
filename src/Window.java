@@ -51,6 +51,10 @@ public class Window {
         return canvas;
     }
 
+    public void resize(int width, int height) {
+        frame.setSize(width, height);
+    }
+
     public JFrame getFrame() { return frame; }
         public Canvas getCanvas(){
             return canvas;
