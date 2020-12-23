@@ -4,7 +4,7 @@ import java.awt.image.BufferedImage;
 import java.time.format.DateTimeFormatter;
 
 public class MazeEscape implements Runnable {
-    final int FPS = 15;
+    final int FPS = 60;
     final long NS_PER_UPDATE = (long)((1.0d/FPS) * 1000000000);
     final long NS_PER_SECOND = 1000000000;
 
@@ -85,6 +85,7 @@ public class MazeEscape implements Runnable {
                 graphics.drawString(gameState.getPlayerHealth() + "/" + GameState.MAX_HEALTH_VALUE, 650, 50);
 
                 if (gameState.getCollectedKeys() < map.getNumOfKeys()) {
+                    running = false;
                     graphics.setColor(Color.YELLOW);
                 } else {
                     graphics.setColor(Color.GREEN);
