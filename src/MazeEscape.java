@@ -85,7 +85,6 @@ public class MazeEscape implements Runnable {
                 graphics.drawString(gameState.getPlayerHealth() + "/" + GameState.MAX_HEALTH_VALUE, 650, 50);
 
                 if (gameState.getCollectedKeys() < map.getNumOfKeys()) {
-                    running = false;
                     graphics.setColor(Color.YELLOW);
                 } else {
                     graphics.setColor(Color.GREEN);
