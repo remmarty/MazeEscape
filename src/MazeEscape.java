@@ -20,7 +20,8 @@ public class MazeEscape implements Runnable {
     private KeyboardInputListener keyboardListener;
     Font font = new Font("Impact", Font.PLAIN, 40);
 
-    String[] mapPaths = {"/map/Map_3.txt", "/map/Map_4.txt", "/map/Map_3.txt"};
+    String[] mapPaths = {"/map/Map_1.csv", "/map/Map_2.csv", "/map/Map_3.txt"};
+
     int currentMapIndex = 0;
     enum FinalState {
         IN_PROGRESS,
@@ -71,13 +72,13 @@ public class MazeEscape implements Runnable {
         int width = fog.getWidth();
         int height = fog.getHeight();
         // TODO refactor position to gamestate
-//        graphics.drawImage(fog, -width/2 + gameState.getPlayer().position.x * Block.WIDTH + Block.WIDTH / 2, -height/2 + gameState.getPlayer().position.y * Block.HEIGHT + Block.HEIGHT/2, width, height, null);
+        graphics.drawImage(fog, -width + gameState.getPlayer().position.x * Block.WIDTH + Block.WIDTH / 2, -height + gameState.getPlayer().position.y * Block.HEIGHT + Block.HEIGHT/2, width*2, height*2, null);
 
         graphics.setFont(font);
 
         switch (state) {
             case IN_PROGRESS:
-                if (gameState.getPlayerHealth() > 50) {
+                if (gameState.getPlayerHealth() > 25) {
                     graphics.setColor(Color.GREEN);
                 } else {
                     graphics.setColor(Color.RED);
@@ -97,7 +98,7 @@ public class MazeEscape implements Runnable {
 
                 // FIXME Load once
                 BufferedImage keyImage = ImgLoader.loadImg("/textures/key.png");
-                graphics.drawImage(keyImage, 710, 65, 40, 40, null);
+                graphics.drawImage(keyImage, 700, 65, 40, 40, null);
                 break;
             case VICTORY:
                 graphics.setColor(Color.green);

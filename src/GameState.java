@@ -64,7 +64,7 @@ public class GameState {
         if (player.getHealth() <= 0) {
             state = State.DEFEAT;
         }
-//
+
         if (collectedKeys < map.getNumOfKeys()) {
             if (map.getBlock(player.getPosition()) == BlockType.KEY) {
                 collectedKeys++;

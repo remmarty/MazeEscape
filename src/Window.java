@@ -9,8 +9,7 @@ public class Window {
         private Canvas canvas;
         private int width, height;
         private String title;
-       // public Font timerFont = new Font("Times New Roman", Font.PLAIN, 70);
-
+        
         public Window(int width, int height, String title, KeyboardInputListener keyboardListener) {
             this.width = width;
             this.height = height;
@@ -35,7 +34,7 @@ public class Window {
 //          counterLabel.setBounds(300, 230, 200, 100);
 //          counterLabel.setHorizontalAlignment((JLabel.CENTER));
 //          counterLabel.setFont(timerFont);
-//          counterLabel.setText("");
+//          counterLabel.setText("");jjjjj
 //          frame.add(counterLabel);
             frame.setVisible(true);
             return frame;
