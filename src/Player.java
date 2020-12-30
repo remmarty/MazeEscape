@@ -2,12 +2,8 @@ import java.awt.*;
 
 public class Player {
     Point position;
-    int health = GameState.MAX_HEALTH_VALUE;
-
-    public static final float DEFAULT_SPEED = 3.0f;
-    public static final int DEFAULT_CREATURE_WIDTH = 64,
-                            DEFAULT_CREATURE_HEIGHT = 64;
-
+    float health = GameState.MAX_HEALTH_VALUE;
+    final double MOVEMENT_HEALTH_PENALTY = 0.5;
 
     public Player(Point spawnPoint) {
         position = spawnPoint;
@@ -16,7 +12,7 @@ public class Player {
     public void move(Point offset) {
         position.translate(offset.x, offset.y);
         if (health > 0) {
-            health -= 1;
+            health -= MOVEMENT_HEALTH_PENALTY;
 //            System.out.println(player.getHealth());
         }
     }
@@ -25,7 +21,7 @@ public class Player {
        graphics.drawImage(TextureLoader.player, position.x * Block.WIDTH, position.y * Block.HEIGHT, null);
     }
 
-    public int getHealth() {
+    public float getHealth() {
         return health;
     }
 

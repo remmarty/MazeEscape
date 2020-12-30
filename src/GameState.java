@@ -12,32 +12,28 @@ public class GameState {
         WIN,
         DEFEAT,
     }
+    // movement constants
+    final Point DOWN = new Point(0, 1);
+    final Point UP = new Point(0, -1);
+    final Point LEFT = new Point(-1, 0);
+    final Point RIGHT = new Point(1, 0);
 
-    //  FIXME refactor to another class
-    private final Point DOWN = new Point(0, 1);
-    private final Point UP = new Point(0, -1);
-    private final Point LEFT = new Point(-1, 0);
-    private final Point RIGHT = new Point(1, 0);
+    final KeyboardInputListener keyboard;
+    final Map map;
 
     public static final int MAX_HEALTH_VALUE = 100;
-    private final KeyboardInputListener keyboard;
-    private final Map map;
+
     Player player;
     LocalTime timeElapsed;
-//    private boolean isCompleted = false;
-    State state = State.IN_PROGRESS;
-
-    public int getCollectedKeys() {
-        return collectedKeys;
-    }
-
-    int collectedKeys = 0;
+    State state;
+    int collectedKeys;
 
     public GameState(Map map, KeyboardInputListener keyboardListener) {
         this.map = map;
         player = new Player(map.getSpawnPoint());
         keyboard = keyboardListener;
         collectedKeys = 0;
+        state = State.IN_PROGRESS;
         timeElapsed = LocalTime.of(0, 0, 0);
         player.setHealth(MAX_HEALTH_VALUE);
     }
@@ -49,8 +45,7 @@ public class GameState {
     }
 
     public void update() {
-//        player.update();
-//        System.out.println(player.getPosition());
+        // keyboard movement
         if (keyboard.goDown && isAllowedMove(DOWN)){
             player.move(DOWN);
         } else if (keyboard.goUp && isAllowedMove(UP)) {
@@ -61,6 +56,7 @@ public class GameState {
             player.move(RIGHT);
         }
 
+        // game over state
         if (player.getHealth() <= 0) {
             state = State.DEFEAT;
         }
@@ -73,10 +69,15 @@ public class GameState {
                 map.put(player.getPosition(), BlockType.PASSAGE);
             }
         } else {
+            // all keys are collected
             if (map.getBlock(player.getPosition()) == BlockType.EXIT) {
                 state = State.WIN;
             }
         }
+    }
+
+    public int getCollectedKeys() {
+        return collectedKeys;
     }
 
     public void render(Graphics graphics) {
@@ -87,16 +88,11 @@ public class GameState {
         return timeElapsed;
     }
 
-    public int getPlayerHealth() {
+    public float getPlayerHealth() {
         return player.getHealth();
     }
 
     public Player getPlayer() {
         return player;
     }
-
-
-//    public Player spawnPlayer(Point spawnPoint) {
-//        player = ;
-//    }
 }

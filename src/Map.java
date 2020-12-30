@@ -2,33 +2,43 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Map {
-
-    private int mapWidth;
-
-    public int getMapWidth() {
-        return mapWidth;
-    }
-
-    public int getMapHeight() {
-        return mapHeight;
-    }
-
-    private int mapHeight;
+    int mapWidth;
+    int mapHeight;
+    int numOfKeys = 0;
     Point playerSpawnPoint;
     BlockType[][] blocks;
-    int numOfKeys = 0;
-
-
-    public int getNumOfKeys() {
-        return numOfKeys;
-    }
-
 
     public Map(String path) {   // constructor that loads the map
         loadMap(path);
     }
 
-    public void mapRender(Graphics graphics) {
+    private void loadMap(String path) {
+        String mapFile = MapLoader.loadMap(path);
+        String[] rows = mapFile.split("\\n");
+        String[] firstRow = rows[0].split("\\s");
+
+        mapHeight = rows.length;
+        mapWidth = firstRow.length;
+        blocks = new BlockType[mapHeight][mapWidth];
+
+        for (int y = 0; y < mapHeight; y++) {
+            String[] currentRow = rows[y].split("\\s");
+            for (int x = 0; x < mapWidth; x++) {
+                int cellValue = MapLoader.parseInt(currentRow[x]);
+                BlockType blockType = BlockType.fromId(cellValue);
+                blocks[y][x] = blockType;
+
+                // infer basic map info from data
+                if (blockType == BlockType.KEY) {
+                    numOfKeys++;
+                } else if (blockType == BlockType.PLAYER) {
+                    playerSpawnPoint = new Point(x, y);
+                }
+            }
+        }
+    }
+
+    public void render(Graphics graphics) {
         BufferedImage blockImg = null;
         for (int y = 0; y < mapHeight; y++)
             for(int x = 0; x < mapWidth; x++){
@@ -50,25 +60,8 @@ public class Map {
             }
     }
 
-    private void loadMap(String path) {
-        String mapFile = MapLoader.loadMap(path);
-        String[] data = mapFile.split("\\s+");
-        mapWidth = MapLoader.parseInt(data[0]);
-        mapHeight = MapLoader.parseInt(data[1]);
-
-        blocks = new BlockType[mapHeight][mapWidth];
-
-        for (int y = 0; y < mapHeight; y++)
-            for(int x = 0; x < mapWidth; x++){
-                int cellValue = MapLoader.parseInt(data[x+y*mapWidth + 2]); // FIXME refactor
-                BlockType blockType = BlockType.fromId(cellValue);
-                if (blockType == BlockType.KEY) {
-                    numOfKeys++;
-                } else if (blockType == BlockType.PLAYER) {
-                    playerSpawnPoint = new Point(x, y);
-                }
-                blocks[y][x] = blockType;
-            }
+    public int getNumOfKeys() {
+        return numOfKeys;
     }
 
     public Point getSpawnPoint() {

@@ -4,23 +4,25 @@ import java.awt.image.BufferedImage;
 import java.time.format.DateTimeFormatter;
 
 public class MazeEscape implements Runnable {
-    final int FPS = 60;
-    final long NS_PER_UPDATE = (long)((1.0d/FPS) * 1000000000);
-    final long NS_PER_SECOND = 1000000000;
+    final int FPS = 15;
+    final long NS_PER_SECOND = 1_000_000_000;
+    final long NS_PER_UPDATE = (long)((1.0d/FPS) * NS_PER_SECOND);
+    final Font font = new Font("Impact", Font.PLAIN, 40);
 
     public int width, height;
     public String title;
-    private boolean running = false;
-    private BufferStrategy bufferStrategy;
-    private Graphics graphics;
-    private BufferedImage textures;
-    private Window window;
-    private Map map;
-    private GameState gameState = null;
-    private KeyboardInputListener keyboardListener;
-    Font font = new Font("Impact", Font.PLAIN, 40);
+    boolean running = false;
 
+    BufferStrategy bufferStrategy;
+    Graphics graphics;
+    BufferedImage textures;
+    Window window;
+    Map map;
+    GameState gameState = null;
+    FinalState state;
+    KeyboardInputListener keyboardListener;
     String[] mapPaths = {"/map/Map_1.csv", "/map/Map_2.csv", "/map/Map_3.txt"};
+    BufferedImage fog = ImgLoader.loadImg("/textures/fog.png");
 
     int currentMapIndex = 0;
     enum FinalState {
@@ -28,7 +30,6 @@ public class MazeEscape implements Runnable {
         VICTORY,
         DEFEAT
     };
-    FinalState state = FinalState.IN_PROGRESS;
 
     public MazeEscape(int width, int height, String title) {  // game constructor
         this.width = width;
@@ -51,6 +52,9 @@ public class MazeEscape implements Runnable {
                     break;
                 case DEFEAT:
                     state = FinalState.DEFEAT;
+                    break;
+                default:
+                    state = FinalState.IN_PROGRESS;
             }
         }
     }
@@ -63,28 +67,18 @@ public class MazeEscape implements Runnable {
         }
         graphics = bufferStrategy.getDrawGraphics();
         graphics.clearRect(0, 0, width, height);
-//        Block.blocks[0].render(graphics, 0,0);
-        map.mapRender(graphics);
 
 
-        /* Create an ARGB BufferedImage */
-        BufferedImage fog = ImgLoader.loadImg("/textures/fog.png");
-        int width = fog.getWidth();
-        int height = fog.getHeight();
-        // TODO refactor position to gamestate
-        graphics.drawImage(fog, -width + gameState.getPlayer().position.x * Block.WIDTH + Block.WIDTH / 2, -height + gameState.getPlayer().position.y * Block.HEIGHT + Block.HEIGHT/2, width*2, height*2, null);
-
+        map.render(graphics);
+        renderFog();
         graphics.setFont(font);
+
 
         switch (state) {
             case IN_PROGRESS:
-                if (gameState.getPlayerHealth() > 25) {
-                    graphics.setColor(Color.GREEN);
-                } else {
-                    graphics.setColor(Color.RED);
-                }
-                graphics.drawString(gameState.getPlayerHealth() + "/" + GameState.MAX_HEALTH_VALUE, 650, 50);
+                renderPlayerHealth();
 
+                // collected keys
                 if (gameState.getCollectedKeys() < map.getNumOfKeys()) {
                     graphics.setColor(Color.YELLOW);
                 } else {
@@ -92,6 +86,7 @@ public class MazeEscape implements Runnable {
                 }
                 graphics.drawString(gameState.getCollectedKeys() + "/" + map.getNumOfKeys(), 650, 100);
 
+                // time counter
                 DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("mm:ss");
                 graphics.setColor(Color.WHITE);
                 graphics.drawString(gameState.getTimeElapsed().format(timeFormatter), 650, 150);
@@ -124,6 +119,22 @@ public class MazeEscape implements Runnable {
 
     }
 
+    private void renderPlayerHealth() {
+        if (gameState.getPlayerHealth() > 25) {
+            graphics.setColor(Color.GREEN);
+        } else {
+            graphics.setColor(Color.RED);
+        }
+        graphics.drawString(Math.round(gameState.getPlayerHealth()) + "/" + GameState.MAX_HEALTH_VALUE, 650, 50);
+    }
+
+    private void renderFog() {
+        int width = fog.getWidth();
+        int height = fog.getHeight();
+        // TODO refactor position to gamestate
+        graphics.drawImage(fog, -width + gameState.getPlayer().position.x * Block.WIDTH + Block.WIDTH / 2, -height + gameState.getPlayer().position.y * Block.HEIGHT + Block.HEIGHT/2, width*2, height*2, null);
+    }
+
     public void boot() {
         keyboardListener = new KeyboardInputListener();
         window = new Window(width, height, title, keyboardListener);
@@ -136,67 +147,36 @@ public class MazeEscape implements Runnable {
     private void reloadWithMap(String mapFilePath) {
         map = new Map(mapFilePath);
         gameState = new GameState(map, keyboardListener);
-        // FIXME
-//        window.resize(map.getMapWidth() * Block.WIDTH, map.getMapHeight() * Block.HEIGHT);
     }
 
     public void run() {
         boot();
+        running = true;
 
         long secondsPassed = 0;
         long nextTick = System.nanoTime();
         long nextSecond = nextTick;
-        long nextRender = nextTick;
 
         while (running) {
-
-
             final long now = System.nanoTime();
 
+            // fixed FPS loop
             if (now - nextTick >= 0) {
                 update();
                 render();
-                // catch up with as many ticks as needed (skip them if necessary).
                 do {
+                    // catch up with as many ticks as needed (skip them if necessary).
                     nextTick += NS_PER_UPDATE;
                 } while (now - nextTick >= 0);
             }
 
+            // loop executed every second
             if (now - nextSecond >= 0) {
-                // catch up with as many ticks as needed (no skipping!).
                 nextSecond += NS_PER_SECOND;
                 secondsPassed++;
-                System.out.println((float)(now - nextSecond) / 1000000000);
+                System.out.println((float)(now - nextSecond) / NS_PER_SECOND);
                 gameState.timeElapsed = gameState.timeElapsed.plusSeconds(1);
             }
-
-            // calculate the delay to the next event.....
-            final long workTime = System.nanoTime();
-            final long minDelay = Math.min(nextSecond - workTime,
-                    Math.min(nextTick - workTime, nextRender - workTime));
-
-            if (minDelay > 0) {
-                //next event is no due yet. Yield the system....
-                // to some point after the next delay... (millisecond precision)
-                long milliDelay = (minDelay + 1_000_000) / 1_000_000L;
-                try {
-                    Thread.sleep(milliDelay);
-                } catch (InterruptedException ie) {
-                    // ignore.
-                }
-            }
         }
-    }
-
-    public void start() {
-        if (running) return;
-        running = true;
-//        gameThread = new Thread(this);
-//        gameThread.start();
-    }
-
-    public void stop() {
-        if (!running) return;
-        running = false;
     }
 }

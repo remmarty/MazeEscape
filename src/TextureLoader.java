@@ -2,8 +2,8 @@ import java.awt.image.BufferedImage;
 
 public class TextureLoader {
 
-    private static final int snipWidth = 16;   // we want to snip 16x16 blocks from png texture sheet
-    private static final int snipHeight = 16;
+    static final int snipWidth = 16;   // we want to snip 16x16 blocks from png texture sheet
+    static final int snipHeight = 16;
 
     public static BufferedImage wall, passage, key, player, exit;    // types of blocks used in game
 

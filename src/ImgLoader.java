@@ -2,7 +2,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-public class ImgLoader {    // method that will load our .png textures
+public class ImgLoader {
 
     public static BufferedImage loadImg(String path) {
         try {
