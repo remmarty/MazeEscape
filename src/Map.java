@@ -2,6 +2,8 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 
 public class Map {
+    public static final int BLOCK_WIDTH = 16;  // every block is 16x16 pixels
+    public static final int BLOCK_HEIGHT = 16;
     int mapWidth;
     int mapHeight;
     int numOfKeys = 0;
@@ -56,7 +58,7 @@ public class Map {
                         blockImg = TextureLoader.exit;
                         break;
                 }
-                graphics.drawImage(blockImg, x * Block.WIDTH, y * Block.HEIGHT, Block.WIDTH, Block.HEIGHT, null);
+                graphics.drawImage(blockImg, x * BLOCK_WIDTH, y * BLOCK_HEIGHT, BLOCK_WIDTH, BLOCK_HEIGHT, null);
             }
     }
 

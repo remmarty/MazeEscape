@@ -17,7 +17,7 @@ public class Player {
     }
 
     public void render(Graphics graphics) {
-        graphics.drawImage(TextureLoader.player, position.x * Block.WIDTH, position.y * Block.HEIGHT, null);
+        graphics.drawImage(TextureLoader.player, position.x * Map.BLOCK_WIDTH, position.y * Map.BLOCK_HEIGHT, null);
     }
 
     public float getHealth() {
@@ -35,8 +35,8 @@ public class Player {
     public Point getCenterPixelPosition() {
         // map position * pixel size of block + half block size
         return new Point(
-                position.x * Block.WIDTH + Block.WIDTH / 2,
-                position.y * Block.HEIGHT + Block.HEIGHT / 2
+                position.x * Map.BLOCK_WIDTH + Map.BLOCK_WIDTH / 2,
+                position.y * Map.BLOCK_HEIGHT + Map.BLOCK_HEIGHT / 2
         );
     }
 }
