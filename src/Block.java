@@ -7,10 +7,9 @@ public class Block {        // block class
 
     public static final int WIDTH = 16;  // every block is 16x16 pixels
     public static final int HEIGHT = 16;
+    public static Block[] blocks = new Block[2500];
     private final BufferedImage blockImg;
     private final int blockID;
-
-    public static Block[] blocks = new Block[2500];
 
     public Block(BufferedImage blockImg, int blockID) {    // block constructor
         blocks[blockID] = this;

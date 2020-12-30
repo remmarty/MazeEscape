@@ -6,7 +6,7 @@ import java.time.format.DateTimeFormatter;
 public class MazeEscape implements Runnable {
     final int FPS = 15;
     final long NS_PER_SECOND = 1_000_000_000;
-    final long NS_PER_UPDATE = (long)((1.0d/FPS) * NS_PER_SECOND);
+    final long NS_PER_UPDATE = (long) ((1.0d / FPS) * NS_PER_SECOND);
     final float FOG_SCALE = 2;
     final Font font = new Font("Impact", Font.PLAIN, 40);
 
@@ -26,11 +26,6 @@ public class MazeEscape implements Runnable {
     BufferedImage keyImage = ImgLoader.loadImg("/textures/key.png");
 
     int currentMapIndex = 0;
-    enum FinalState {
-        IN_PROGRESS,
-        VICTORY,
-        DEFEAT
-    };
 
     public MazeEscape(int width, int height, String title) {  // game constructor
         this.width = width;
@@ -62,7 +57,7 @@ public class MazeEscape implements Runnable {
 
     public void render() {
         bufferStrategy = window.getCanvas().getBufferStrategy();
-        if (bufferStrategy == null){
+        if (bufferStrategy == null) {
             window.getCanvas().createBufferStrategy(2);
             return;
         }
@@ -124,12 +119,12 @@ public class MazeEscape implements Runnable {
 
         Point playerCenterPixelPos = gameState.getPlayer().getCenterPixelPosition();
         Point playerRelativeFogOffset = new Point(
-            (int) (-width / 2 * FOG_SCALE + playerCenterPixelPos.x),
-            (int) (-height / 2 * FOG_SCALE + playerCenterPixelPos.y)
+                (int) (-width / 2 * FOG_SCALE + playerCenterPixelPos.x),
+                (int) (-height / 2 * FOG_SCALE + playerCenterPixelPos.y)
         );
         Point scaledDim = new Point(
-            (int) (width * FOG_SCALE),
-            (int) (height * FOG_SCALE)
+                (int) (width * FOG_SCALE),
+                (int) (height * FOG_SCALE)
         );
         graphics.drawImage(fog, playerRelativeFogOffset.x, playerRelativeFogOffset.y, scaledDim.x, scaledDim.y, null);
     }
@@ -173,5 +168,11 @@ public class MazeEscape implements Runnable {
                 gameState.timeElapsed = gameState.timeElapsed.plusSeconds(1);
             }
         }
+    }
+
+    enum FinalState {
+        IN_PROGRESS,
+        VICTORY,
+        DEFEAT
     }
 }

@@ -10,7 +10,7 @@ public class MapLoader {
         try {
             BufferedReader bufread = new BufferedReader(new FileReader(path));
             String line;
-            while((line = bufread.readLine()) != null)
+            while ((line = bufread.readLine()) != null)
                 builder.append(line + "\n");
 
             bufread.close();
@@ -23,7 +23,7 @@ public class MapLoader {
     public static int parseInt(String number) {
         try {
             return Integer.parseInt(number);
-        }catch(NumberFormatException e) {
+        } catch (NumberFormatException e) {
             e.printStackTrace();
             return 0;
         }

@@ -1,9 +1,9 @@
 import java.awt.*;
 
 public class Player {
+    final double MOVEMENT_HEALTH_PENALTY = 0.5;
     Point position;
     float health = GameState.MAX_HEALTH_VALUE;
-    final double MOVEMENT_HEALTH_PENALTY = 0.5;
 
     public Player(Point spawnPoint) {
         position = spawnPoint;
@@ -13,21 +13,20 @@ public class Player {
         position.translate(offset.x, offset.y);
         if (health > 0) {
             health -= MOVEMENT_HEALTH_PENALTY;
-//            System.out.println(player.getHealth());
         }
     }
 
     public void render(Graphics graphics) {
-       graphics.drawImage(TextureLoader.player, position.x * Block.WIDTH, position.y * Block.HEIGHT, null);
+        graphics.drawImage(TextureLoader.player, position.x * Block.WIDTH, position.y * Block.HEIGHT, null);
     }
 
     public float getHealth() {
         return health;
     }
 
-//    public void addHealth(int healthPoints) {
-//        health += healthPoints;
-//    }
+    public void setHealth(int value) {
+        health = value;
+    }
 
     public Point getPosition() {
         return position;
@@ -36,12 +35,8 @@ public class Player {
     public Point getCenterPixelPosition() {
         // map position * pixel size of block + half block size
         return new Point(
-        position.x * Block.WIDTH + Block.WIDTH / 2,
-        position.y * Block.HEIGHT + Block.HEIGHT / 2
+                position.x * Block.WIDTH + Block.WIDTH / 2,
+                position.y * Block.HEIGHT + Block.HEIGHT / 2
         );
-    }
-
-    public void setHealth(int value) {
-        health = value;
     }
 }

@@ -1,18 +1,24 @@
 import java.awt.image.BufferedImage;
 
 public class TextureLoader {
+    // we want to snip 16x16 blocks from png texture sheet
+    static final String TEXTURES_FILEPATH = "/textures/textures.png";
+    static final int SNIP_WIDTH = 16;
+    static final int SNIP_HEIGHT = 16;
 
-    static final int snipWidth = 16;   // we want to snip 16x16 blocks from png texture sheet
-    static final int snipHeight = 16;
-
-    public static BufferedImage wall, passage, key, player, exit;    // types of blocks used in game
+    // types of blocks used in game
+    public static BufferedImage wall, passage, key, player, exit;
 
     public static void loadBlocks() {
-        TextureSheet textures = new TextureSheet(ImgLoader.loadImg("/textures/textures.png")); // create and load texture sheet object
-        wall = textures.snip(0, 0, snipWidth, snipHeight);
-        passage = textures.snip(snipWidth, 0, snipWidth, snipHeight);
-        player = textures.snip(snipWidth * 2, 0, snipWidth, snipHeight);
-        key = textures.snip(snipWidth * 3, 0, snipWidth, snipHeight);
-        exit = textures.snip(snipWidth * 4, 0, snipWidth, snipHeight);
+        BufferedImage textureSheet = ImgLoader.loadImg(TEXTURES_FILEPATH);
+        wall = snip(textureSheet, SNIP_WIDTH * 0, 0, SNIP_WIDTH, SNIP_HEIGHT);
+        passage = snip(textureSheet, SNIP_WIDTH * 1, 0, SNIP_WIDTH, SNIP_HEIGHT);
+        player = snip(textureSheet, SNIP_WIDTH * 2, 0, SNIP_WIDTH, SNIP_HEIGHT);
+        key = snip(textureSheet, SNIP_WIDTH * 3, 0, SNIP_WIDTH, SNIP_HEIGHT);
+        exit = snip(textureSheet, SNIP_WIDTH * 4, 0, SNIP_WIDTH, SNIP_HEIGHT);
+    }
+
+    public static BufferedImage snip(BufferedImage img, int x, int y, int width, int height) {
+        return img.getSubimage(x, y, width, height);
     }
 }

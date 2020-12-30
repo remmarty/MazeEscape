@@ -11,10 +11,6 @@ public enum BlockType {
         this.value = value;
     }
 
-    public int getId() {
-        return value;
-    }
-
     public static BlockType fromId(int id) {
         for (BlockType type : values()) {
             if (type.getId() == id) {
@@ -22,5 +18,9 @@ public enum BlockType {
             }
         }
         return null;
+    }
+
+    public int getId() {
+        return value;
     }
 }

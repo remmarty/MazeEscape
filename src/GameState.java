@@ -7,11 +7,7 @@ import java.awt.*;
 import java.time.LocalTime;
 
 public class GameState {
-    enum State {
-        IN_PROGRESS,
-        WIN,
-        DEFEAT,
-    }
+    public static final int MAX_HEALTH_VALUE = 100;
     // movement constants
     final Point DOWN = new Point(0, 1);
     final Point UP = new Point(0, -1);
@@ -20,14 +16,10 @@ public class GameState {
 
     final KeyboardInputListener keyboard;
     final Map map;
-
-    public static final int MAX_HEALTH_VALUE = 100;
-
     Player player;
     LocalTime timeElapsed;
     State state;
     int collectedKeys;
-
     public GameState(Map map, KeyboardInputListener keyboardListener) {
         this.map = map;
         player = new Player(map.getSpawnPoint());
@@ -46,7 +38,7 @@ public class GameState {
 
     public void update() {
         // keyboard movement
-        if (keyboard.goDown && isAllowedMove(DOWN)){
+        if (keyboard.goDown && isAllowedMove(DOWN)) {
             player.move(DOWN);
         } else if (keyboard.goUp && isAllowedMove(UP)) {
             player.move(UP);
@@ -94,5 +86,11 @@ public class GameState {
 
     public Player getPlayer() {
         return player;
+    }
+
+    enum State {
+        IN_PROGRESS,
+        WIN,
+        DEFEAT,
     }
 }

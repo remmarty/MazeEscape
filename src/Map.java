@@ -41,8 +41,8 @@ public class Map {
     public void render(Graphics graphics) {
         BufferedImage blockImg = null;
         for (int y = 0; y < mapHeight; y++)
-            for(int x = 0; x < mapWidth; x++){
-                switch(blocks[y][x]) {
+            for (int x = 0; x < mapWidth; x++) {
+                switch (blocks[y][x]) {
                     case PASSAGE:
                         blockImg = TextureLoader.passage;
                         break;
