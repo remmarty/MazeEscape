@@ -33,6 +33,14 @@ public class Player {
         return position;
     }
 
+    public Point getCenterPixelPosition() {
+        // map position * pixel size of block + half block size
+        return new Point(
+        position.x * Block.WIDTH + Block.WIDTH / 2,
+        position.y * Block.HEIGHT + Block.HEIGHT / 2
+        );
+    }
+
     public void setHealth(int value) {
         health = value;
     }

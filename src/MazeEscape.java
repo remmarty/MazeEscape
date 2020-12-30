@@ -7,6 +7,7 @@ public class MazeEscape implements Runnable {
     final int FPS = 15;
     final long NS_PER_SECOND = 1_000_000_000;
     final long NS_PER_UPDATE = (long)((1.0d/FPS) * NS_PER_SECOND);
+    final float FOG_SCALE = 2;
     final Font font = new Font("Impact", Font.PLAIN, 40);
 
     public int width, height;
@@ -15,7 +16,6 @@ public class MazeEscape implements Runnable {
 
     BufferStrategy bufferStrategy;
     Graphics graphics;
-    BufferedImage textures;
     Window window;
     Map map;
     GameState gameState = null;
@@ -23,6 +23,7 @@ public class MazeEscape implements Runnable {
     KeyboardInputListener keyboardListener;
     String[] mapPaths = {"/map/Map_1.csv", "/map/Map_2.csv", "/map/Map_3.txt"};
     BufferedImage fog = ImgLoader.loadImg("/textures/fog.png");
+    BufferedImage keyImage = ImgLoader.loadImg("/textures/key.png");
 
     int currentMapIndex = 0;
     enum FinalState {
@@ -68,32 +69,19 @@ public class MazeEscape implements Runnable {
         graphics = bufferStrategy.getDrawGraphics();
         graphics.clearRect(0, 0, width, height);
 
-
         map.render(graphics);
         renderFog();
         graphics.setFont(font);
 
-
         switch (state) {
             case IN_PROGRESS:
                 renderPlayerHealth();
-
-                // collected keys
-                if (gameState.getCollectedKeys() < map.getNumOfKeys()) {
-                    graphics.setColor(Color.YELLOW);
-                } else {
-                    graphics.setColor(Color.GREEN);
-                }
-                graphics.drawString(gameState.getCollectedKeys() + "/" + map.getNumOfKeys(), 650, 100);
+                renderCollectedKeys();
 
                 // time counter
                 DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("mm:ss");
                 graphics.setColor(Color.WHITE);
                 graphics.drawString(gameState.getTimeElapsed().format(timeFormatter), 650, 150);
-
-                // FIXME Load once
-                BufferedImage keyImage = ImgLoader.loadImg("/textures/key.png");
-                graphics.drawImage(keyImage, 700, 65, 40, 40, null);
                 break;
             case VICTORY:
                 graphics.setColor(Color.green);
@@ -106,17 +94,19 @@ public class MazeEscape implements Runnable {
                 running = false;
                 break;
         }
-
-//        BufferedImage resizedImage = new BufferedImage(60, 60, BufferedImage.TYPE_INT_ARGB);
-//        Graphics2D graphics2D = resizedImage.createGraphics();
-//        graphics2D.dispose();
-
-//        if(gameState != null){
         gameState.render(graphics);
-//        }
         bufferStrategy.show();
         graphics.dispose();
+    }
 
+    private void renderCollectedKeys() {
+        if (gameState.getCollectedKeys() < map.getNumOfKeys()) {
+            graphics.setColor(Color.YELLOW);
+        } else {
+            graphics.setColor(Color.GREEN);
+        }
+        graphics.drawString(gameState.getCollectedKeys() + "/" + map.getNumOfKeys(), 650, 100);
+        graphics.drawImage(keyImage, 700, 65, 40, 40, null);
     }
 
     private void renderPlayerHealth() {
@@ -131,8 +121,17 @@ public class MazeEscape implements Runnable {
     private void renderFog() {
         int width = fog.getWidth();
         int height = fog.getHeight();
-        // TODO refactor position to gamestate
-        graphics.drawImage(fog, -width + gameState.getPlayer().position.x * Block.WIDTH + Block.WIDTH / 2, -height + gameState.getPlayer().position.y * Block.HEIGHT + Block.HEIGHT/2, width*2, height*2, null);
+
+        Point playerCenterPixelPos = gameState.getPlayer().getCenterPixelPosition();
+        Point playerRelativeFogOffset = new Point(
+            (int) (-width / 2 * FOG_SCALE + playerCenterPixelPos.x),
+            (int) (-height / 2 * FOG_SCALE + playerCenterPixelPos.y)
+        );
+        Point scaledDim = new Point(
+            (int) (width * FOG_SCALE),
+            (int) (height * FOG_SCALE)
+        );
+        graphics.drawImage(fog, playerRelativeFogOffset.x, playerRelativeFogOffset.y, scaledDim.x, scaledDim.y, null);
     }
 
     public void boot() {
@@ -141,7 +140,6 @@ public class MazeEscape implements Runnable {
         String initialMap = mapPaths[0];
         reloadWithMap(initialMap);
         TextureLoader.loadBlocks();
-        textures = ImgLoader.loadImg("/textures/textures.png");
     }
 
     private void reloadWithMap(String mapFilePath) {
@@ -153,7 +151,6 @@ public class MazeEscape implements Runnable {
         boot();
         running = true;
 
-        long secondsPassed = 0;
         long nextTick = System.nanoTime();
         long nextSecond = nextTick;
 
@@ -173,8 +170,6 @@ public class MazeEscape implements Runnable {
             // loop executed every second
             if (now - nextSecond >= 0) {
                 nextSecond += NS_PER_SECOND;
-                secondsPassed++;
-                System.out.println((float)(now - nextSecond) / NS_PER_SECOND);
                 gameState.timeElapsed = gameState.timeElapsed.plusSeconds(1);
             }
         }
