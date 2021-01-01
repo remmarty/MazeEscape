@@ -9,7 +9,7 @@ import java.time.format.DateTimeFormatter;
  * includes game loop
  * @author Remigiusz Martyniak
  */
-public class MazeEscape implements Runnable {
+public class MistyMaze implements Runnable {
     /**  Setting frames per second */
     final int FPS = 15;
     final long NS_PER_SECOND = 1_000_000_000;
@@ -49,7 +49,7 @@ public class MazeEscape implements Runnable {
      * @param height Game window height
      * @param title Game window title
      */
-    public MazeEscape(int width, int height, String title) {
+    public MistyMaze(int width, int height, String title) {
         this.width = width;
         this.height = height;
         this.title = title;
