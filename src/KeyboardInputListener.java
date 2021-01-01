@@ -6,9 +6,10 @@ import java.awt.event.KeyListener;
  * @author Remigiusz Martyniak
  */
 public class KeyboardInputListener implements KeyListener {
-    private static final int KEYS = 256; // max number of keys that can be simultaneously used
-    private final boolean[] key;
-    public boolean goRight, goLeft, goUp, goDown;
+    /** max number of keys that can be simultaneously used */
+    static final int KEYS = 104;
+    final boolean[] key;
+    boolean goRight, goLeft, goUp, goDown;
 
     public KeyboardInputListener() {
         key = new boolean[KEYS];
