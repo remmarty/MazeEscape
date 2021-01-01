@@ -1,14 +1,28 @@
 import java.awt.*;
 
+/**
+ * Represents current player state: health, map position
+ * @author Remigiusz Martyniak
+ */
 public class Player {
+
+    /** Health cost of one player move */
     final double MOVEMENT_HEALTH_PENALTY = 0.5;
+    /** Player health pool */
+    public static final float MAX_HEALTH_VALUE = 100;
+    /** Player current health */
+    static float health = MAX_HEALTH_VALUE;
+    /** Player position */
     Point position;
-    float health = GameState.MAX_HEALTH_VALUE;
 
     public Player(Point spawnPoint) {
         position = spawnPoint;
     }
 
+    /**
+     * Every move decreases player health
+     * @param offset
+     */
     public void move(Point offset) {
         position.translate(offset.x, offset.y);
         if (health > 0) {
@@ -16,6 +30,10 @@ public class Player {
         }
     }
 
+    /**
+     * Rendering player
+     * @param graphics
+     */
     public void render(Graphics graphics) {
         graphics.drawImage(TextureLoader.player, position.x * Map.BLOCK_WIDTH, position.y * Map.BLOCK_HEIGHT, null);
     }
@@ -24,7 +42,7 @@ public class Player {
         return health;
     }
 
-    public void setHealth(int value) {
+    public void setHealth(float value) {
         health = value;
     }
 
@@ -32,6 +50,9 @@ public class Player {
         return position;
     }
 
+    /**
+     * @return player center position on the map
+     */
     public Point getCenterPixelPosition() {
         // map position * pixel size of block + half block size
         return new Point(

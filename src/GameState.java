@@ -6,9 +6,12 @@
 import java.awt.*;
 import java.time.LocalTime;
 
+/**
+ * Class that manages player movement, game rules, time etc.
+ * @author Remigiusz Martyniak
+ */
 public class GameState {
-    public static final int MAX_HEALTH_VALUE = 100;
-    // movement constants
+    /** movement constants */
     final Point DOWN = new Point(0, 1);
     final Point UP = new Point(0, -1);
     final Point LEFT = new Point(-1, 0);
@@ -16,10 +19,18 @@ public class GameState {
 
     final KeyboardInputListener keyboard;
     final Map map;
+    /** fields necessary to manage game state */
     Player player;
     LocalTime timeElapsed;
     State state;
     int collectedKeys;
+
+    /**
+     * Class constructor that sets default values when map is reloaded
+     * spawns player, resets health, collected keys and time counter
+     * @param map
+     * @param keyboardListener
+     */
     public GameState(Map map, KeyboardInputListener keyboardListener) {
         this.map = map;
         player = new Player(map.getSpawnPoint());
@@ -27,17 +38,23 @@ public class GameState {
         collectedKeys = 0;
         state = State.IN_PROGRESS;
         timeElapsed = LocalTime.of(0, 0, 0);
-        player.setHealth(MAX_HEALTH_VALUE);
+        player.setHealth(Player.MAX_HEALTH_VALUE);
     }
 
+    /**
+     * Verifies whether there is no wall where player wants to move
+     * @param relative direction in which player wants to move
+     */
     private boolean isAllowedMove(Point relative) {
         Point positionToCheck = (Point) player.getPosition().clone();
         positionToCheck.translate(relative.x, relative.y);
         return map.getBlock(positionToCheck) != BlockType.WALL;
     }
 
+    /** Handling player movement, keeping track of collected keys and updating game state every frame */
     public void update() {
-        // keyboard movement
+
+        // movement
         if (keyboard.goDown && isAllowedMove(DOWN)) {
             player.move(DOWN);
         } else if (keyboard.goUp && isAllowedMove(UP)) {
@@ -53,15 +70,15 @@ public class GameState {
             state = State.DEFEAT;
         }
 
+        // collecting a key make it disappear and resets health pool
         if (collectedKeys < map.getNumOfKeys()) {
             if (map.getBlock(player.getPosition()) == BlockType.KEY) {
                 collectedKeys++;
-                player.setHealth(MAX_HEALTH_VALUE);
-                System.out.println("key collected");
+                player.setHealth(Player.MAX_HEALTH_VALUE);
                 map.put(player.getPosition(), BlockType.PASSAGE);
             }
         } else {
-            // all keys are collected
+            // moving to exit when all keys are collected means victory
             if (map.getBlock(player.getPosition()) == BlockType.EXIT) {
                 state = State.WIN;
             }
@@ -76,9 +93,7 @@ public class GameState {
         player.render(graphics);
     }
 
-    public LocalTime getTimeElapsed() {
-        return timeElapsed;
-    }
+    public LocalTime getTimeElapsed() { return timeElapsed; }
 
     public float getPlayerHealth() {
         return player.getHealth();
@@ -88,6 +103,7 @@ public class GameState {
         return player;
     }
 
+    // three possible states of the game
     enum State {
         IN_PROGRESS,
         WIN,

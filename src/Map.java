@@ -1,21 +1,38 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+/**
+ * Deserializes map file into map object
+ * @author Remigiusz Martyniak
+ */
 public class Map {
-    public static final int BLOCK_WIDTH = 16;  // every block is 16x16 pixels
+    /** every block is 16px wide */
+    public static final int BLOCK_WIDTH = 16;
+    /** every block is 16px high */
     public static final int BLOCK_HEIGHT = 16;
+
     int mapWidth;
     int mapHeight;
     int numOfKeys = 0;
     Point playerSpawnPoint;
     BlockType[][] blocks;
 
-    public Map(String path) {   // constructor that loads the map
+    /**
+     * constructor that loads the map
+     * @param path relative path to the given map
+     */
+    public Map(String path) {
         loadMap(path);
     }
 
+    /**
+     * Loads file from disk by given path
+     * infers map size based on amount of rows and first column in file
+     * infers amount of keys and player spawn point
+     * @param path relative path to resources
+     */
     private void loadMap(String path) {
-        String mapFile = MapLoader.loadMap(path);
+        String mapFile = MapLoader.readMapFile(path);
         String[] rows = mapFile.split("\\n");
         String[] firstRow = rows[0].split("\\s");
 
@@ -40,6 +57,10 @@ public class Map {
         }
     }
 
+    /**
+     * Draws block textures based on their type
+     * @param graphics
+     */
     public void render(Graphics graphics) {
         BufferedImage blockImg = null;
         for (int y = 0; y < mapHeight; y++)
@@ -73,7 +94,7 @@ public class Map {
     public BlockType getBlock(Point coord) {
         return blocks[coord.y][coord.x];
     }
-
+    /** Utility that assigns block type to specific map coordinate */
     public void put(Point coord, BlockType blockType) {
         blocks[coord.y][coord.x] = blockType;
     }
