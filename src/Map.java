@@ -59,7 +59,7 @@ public class Map {
 
     /**
      * Draws block textures based on their type
-     * @param graphics
+     * @param graphics drawing buffer
      */
     public void render(Graphics graphics) {
         BufferedImage blockImg = null;
@@ -94,7 +94,11 @@ public class Map {
     public BlockType getBlock(Point coord) {
         return blocks[coord.y][coord.x];
     }
-    /** Utility that assigns block type to specific map coordinate */
+
+    /** Utility that assigns block type to specific map coordinate
+     * @param coord position into which we want to put block
+     * @param blockType type of block we want to put
+     */
     public void put(Point coord, BlockType blockType) {
         blocks[coord.y][coord.x] = blockType;
     }

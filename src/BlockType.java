@@ -18,6 +18,7 @@ public enum BlockType {
     /**
      * Converts value from map file to object
      * @param id numeric value from map
+     * @return block type or null
      */
     public static BlockType fromId(int id) {
         for (BlockType type : values()) {

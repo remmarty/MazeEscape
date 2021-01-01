@@ -31,7 +31,7 @@ public class MapLoader {
 
     /**
      * Parse String to int
-     * @param number
+     * @param number String representation of integers
      * @return integer values
      */
     public static int parseInt(String number) {

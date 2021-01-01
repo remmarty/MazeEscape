@@ -21,7 +21,7 @@ public class Player {
 
     /**
      * Every move decreases player health
-     * @param offset
+     * @param offset relative vector by which player wants to move
      */
     public void move(Point offset) {
         position.translate(offset.x, offset.y);
@@ -32,7 +32,7 @@ public class Player {
 
     /**
      * Rendering player
-     * @param graphics
+     * @param graphics drawing buffer
      */
     public void render(Graphics graphics) {
         graphics.drawImage(TextureLoader.player, position.x * Map.BLOCK_WIDTH, position.y * Map.BLOCK_HEIGHT, null);

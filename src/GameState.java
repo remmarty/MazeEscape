@@ -28,8 +28,8 @@ public class GameState {
     /**
      * Class constructor that sets default values when map is reloaded
      * spawns player, resets health, collected keys and time counter
-     * @param map
-     * @param keyboardListener
+     * @param map deserialized from file
+     * @param keyboardListener keyboard handler
      */
     public GameState(Map map, KeyboardInputListener keyboardListener) {
         this.map = map;
