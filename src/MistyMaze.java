@@ -15,7 +15,7 @@ public class MistyMaze implements Runnable {
     final long NS_PER_SECOND = 1_000_000_000;
     final long NS_PER_UPDATE = (long) ((1.0d / FPS) * NS_PER_SECOND);
     /** Setting size of visible area around the player */
-    final float FOG_SCALE = 4;
+    final float FOG_SCALE = 1;
     /**  Setting font used in game */
     final Font font = new Font("Impact", Font.PLAIN, 40);
 
